@@ -7,6 +7,8 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.database.Cursor;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,8 +16,12 @@ import android.provider.MediaStore;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Clase de utilidad para almacenar los datos de un Video del MediaStore
+ */
 class Video {
     private final Uri uri;
     private final String name;
@@ -29,6 +35,13 @@ class Video {
         this.size = size;
     }
 }
+
+/**
+ * @author Fernando
+ *
+ * Clase de ejemplo para la utilización de MediaStore
+ */
+
 public class EjemploMediaStore extends AppCompatActivity {
 
     @Override
@@ -89,14 +102,29 @@ public class EjemploMediaStore extends AppCompatActivity {
                 // archivo de medios.
                 listaVideos.add(new Video(contentUri, name, duration, size));
             }//while
+
+            SensorManager miSM = (SensorManager) getSystemService(SENSOR_SERVICE);
+            List<Sensor> listaSensores= miSM.getSensorList(Sensor.TYPE_ALL);
+            for(Sensor s: listaSensores){
+                Log.i("Sensores",s.getName());
+            }
+
+
         }//try
         catch (Exception ex){
             Log.w("","");
         }
     }//OnCreate
 
-
-    private void anhadirElemento(){
+    /**
+     *
+     * @param video Objeto de tipo vídeo a añadir en el MediaStore
+     * @return true si se añadió el elemento con éxito, false en caso contrario
+     *
+     * El método anhadirElemento sirve para añadir un elemento de la clase {@link Video} Video
+     * al MediaStore
+     */
+    private boolean anhadirElemento(Video video){
 
         // Necesitamos crear un ContentResolver para gestionar el contenido multimedia
         ContentResolver resolver = getApplicationContext()
@@ -116,6 +144,6 @@ public class EjemploMediaStore extends AppCompatActivity {
         Uri myFavoriteSongUri = resolver
                 .insert(audioCollection, newSongDetails);
 
-
+        return true;
     }
 }//class
